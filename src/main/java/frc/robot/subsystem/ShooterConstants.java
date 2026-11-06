@@ -24,6 +24,12 @@ public final class ShooterConstants {
     public static final double PiviotSpeed2 = 0.1;
   }
 
+  public static final class PID {
+    public static final double kP = 40;
+    public static final double kI = 0.5;
+    public static final double kD = 0.1;
+  }
+
   public static final class OIConstants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
   }

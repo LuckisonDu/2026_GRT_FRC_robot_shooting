@@ -17,12 +17,12 @@ public class RobotContainer {
   private void configureBindings() {
     ShooterSubsystem.setDefaultCommand(
         ShooterSubsystem.ShootingCommand(
-            () -> -driverController.(),
+            () -> -driverController.getCircleButtonReleased(),
           
           
           
         ShooterSubsystem.ShootingCommand2(
-            () -> -driverController.(),
+            () -> -driverController.getCrossButtonReleased(),
           
           );
   }
