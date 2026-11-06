@@ -9,7 +9,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystem.ShooterConstants.*;
 import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -57,26 +57,36 @@ public class ShooterSubsystem extends SubsystemBase {
     drive.setDeadband(DriveConstants.DEADBAND);
   }
 
-  public void Rotation(double speed) {
-
-
-
-
-
-    drive.arcadeDrive(forward, rotation);
-
-
-
-    
-  }
-
   public void stop() {
     drive.stopMotor();
   }
 
-  public Command RotationCommand(double speed) {
-    return run(() -> Rotation(speed);
+
+  
+
+
+  public void Rotation(double speed) {
+    drive.arcadeDrive(forward, rotation);
+  }
+  public void Piviot(double speed) {
+    drive.arcadeDrive(forward, rotation);
+  }
+  public Command ShootingCommand(boolean button) {
+    if(button){
+      return run(
+        () -> Rotation(ShooterConstants.RotationSpeed1),
+        () -> Piviot(ShooterConstants.PiviotSpeed1),
+      );
+    }else{}
   }
 
+  public Command ShootingCommand2(boolean button) {
+    if(button){
+      return run(
+        () -> Rotation(ShooterConstants.RotationSpeed2),
+        () -> Piivot(ShooterConstants.PiviotSpeed2),
+      );
+    }else{}
+  }
   
 }

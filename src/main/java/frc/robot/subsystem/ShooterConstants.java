@@ -15,13 +15,13 @@ public final class ShooterConstants {
 
 
     
-    public static final double Speed1 = 0.5;
-    public static final double Rotation1 = 0.1;
+    public static final double RotationSpeed1 = 0.5;
+    public static final double PiviotSpeed1 = 0.1;
 
 
 
-    public static final double Speed2 = 0.5;
-    public static final double Rotation2 = 0.1;
+    public static final double RotationSpeed2 = 0.5;
+    public static final double PiviotSpeed2 = 0.1;
   }
 
   public static final class OIConstants {
