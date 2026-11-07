@@ -11,7 +11,7 @@ public final class ShooterConstants {
   public static final int RIGHT_ID = 16;
 
   public static final int CANCODER_ID = 18;
-  public static final int CURRENT_LIMIT_AMPS = 10;
+  public static final int CURRENT_LIMIT_AMPS = 50;
 
   public static final double RotationSpeed1 = 40;
   public static final double RotationSpeed2 = 60;

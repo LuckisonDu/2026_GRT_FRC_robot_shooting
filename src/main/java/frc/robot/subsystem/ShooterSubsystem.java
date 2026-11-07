@@ -23,10 +23,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // don't put it here and also its not suppose to be roborio but in main idk what it is ask daniel 
   CANBus kCANBus;
-  TalonFX m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
-  TalonFX m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
-  TalonFX m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
-  CANcoder m_cancoder = new CANcoder(ShooterConstants.CANCODER_ID, kCANBus);
+  TalonFX m_leftLeader;
+  TalonFX m_leftFollower;
+  TalonFX m_right;
+  CANcoder m_cancoder;
   PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
   BangBangController bangBang = new BangBangController();
 
@@ -35,7 +35,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
 
-  public ShooterSubsystem() {
+  public ShooterSubsystem(CANBus kCANBus) {
+    this.kCANBus = kCANBus;
     m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
     m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
     m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
@@ -92,8 +93,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
 
-  public Command ShootingCommand(CANBus kCANBus) {
-    this.kCANBus = kCANBus;
+  public Command ShootingCommand() {
     return runEnd(
         () -> RotationAndPiviot(
             ShooterConstants.RotationSpeed1,
@@ -101,8 +101,7 @@ public class ShooterSubsystem extends SubsystemBase {
         this::stop);
   }
 
-  public Command ShootingCommand2(CANBus kCANBus) {
-    this.kCANBus = kCANBus;
+  public Command ShootingCommand2() {
     return runEnd(
         () -> RotationAndPiviot(
             ShooterConstants.RotationSpeed2,

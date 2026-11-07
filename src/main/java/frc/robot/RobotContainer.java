@@ -9,9 +9,9 @@ import frc.robot.subsystem.ShooterConstants.*;
 import frc.robot.subsystem.ShooterSubsystem;
 
 public class RobotContainer {
-  private final ShooterSubsystem ShooterSubsystem = new ShooterSubsystem();
-  private final CommandPS5Controller driverController = new CommandPS5Controller(OIConstants.DRIVER_CONTROLLER_PORT);
   final CANBus kCANBus = new CANBus("BetaBot");
+  private final ShooterSubsystem ShooterSubsystem = new ShooterSubsystem(kCANBus);
+  private final CommandPS5Controller driverController = new CommandPS5Controller(OIConstants.DRIVER_CONTROLLER_PORT);
 
 
   public RobotContainer() {
@@ -20,10 +20,10 @@ public class RobotContainer {
 
   private void configureBindings() {
     driverController.circle().onTrue(
-        ShooterSubsystem.ShootingCommand(kCANBus));
+        ShooterSubsystem.ShootingCommand());
 
     driverController.cross().onTrue(
-        ShooterSubsystem.ShootingCommand2(kCANBus));
+        ShooterSubsystem.ShootingCommand2());
 
     driverController.triangle().onTrue(
         ShooterSubsystem.runOnce(ShooterSubsystem::stop));
