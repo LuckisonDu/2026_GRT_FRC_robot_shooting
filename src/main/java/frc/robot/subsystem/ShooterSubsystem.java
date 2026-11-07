@@ -13,7 +13,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.controller.BangBangController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystem.ShooterConstants.*;
@@ -21,15 +20,15 @@ import frc.robot.subsystem.ShooterConstants.*;
 
 public class ShooterSubsystem extends SubsystemBase {
   // initialize devices on the rio can bus
-  final CANBus kCANBus = CANBus.roboRIO();
-  final TalonFX m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
-  final TalonFX m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
-  final TalonFX m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
-  final CANcoder m_cancoder = new CANcoder(ShooterConstants.CANCODER_ID, kCANBus);
-  final BangBangController bangBang = new BangBangController();
 
-
-
+  // don't put it here and also its not suppose to be roborio but in main idk what it is ask daniel 
+  CANBus kCANBus;
+  TalonFX m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
+  TalonFX m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
+  TalonFX m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
+  CANcoder m_cancoder = new CANcoder(ShooterConstants.CANCODER_ID, kCANBus);
+  PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+  BangBangController bangBang = new BangBangController();
 
 
 
@@ -37,70 +36,78 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
   public ShooterSubsystem() {
-    var configs = new TalonFXConfiguration();
-    // in init function, set slot 0 gains
-    configs.Slot0.kP = PID.kP; // An error of 1 rotation results in 2.4 V output
-    configs.Slot0.kI = PID.kI; // no output for integrated error
-    configs.Slot0.kD = PID.kD; // A velocity of 1 rps results in 0.1 V output
-    // duty cycle whihc is about electricity
+    m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
+    m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
+    m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
+    m_cancoder = new CANcoder(ShooterConstants.CANCODER_ID, kCANBus);
 
-    m_leftLeader.getConfigurator().apply(configs);
+    //useless change
+    m_cancoder.setPosition(m_cancoder.getAbsolutePosition().waitForUpdate(0.2).getValueAsDouble());
+
+    
+
+    //Pivoit
+    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs.Slot0.kP = PID.kP;
+    configs.Slot0.kI = PID.kI;
+    configs.Slot0.kD = PID.kD;
+    
+    configs.Feedback.FeedbackRemoteSensorID = ShooterConstants.CANCODER_ID;
+    configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    configs.Feedback.SensorToMechanismRatio = ShooterConstants.PIVOT_SENSOR_RATIO;
+    configs.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT_AMPS;
     m_right.getConfigurator().apply(configs);
-    m_leftFollower.getConfigurator().apply(configs);
 
-  final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
+    TalonFXConfiguration flywheelConfig = new TalonFXConfiguration();
+    flywheelConfig.Feedback.SensorToMechanismRatio = ShooterConstants.FLYWHEEL_GEAR_RATIO;
+    flywheelConfig.CurrentLimits.StatorCurrentLimit = ShooterConstants.CURRENT_LIMIT_AMPS;
+    m_leftLeader.getConfigurator().apply(flywheelConfig);
+    m_leftFollower.getConfigurator().apply(flywheelConfig);
 
-  // set position to 10 rotations
-  m_talonFX.setControl(m_request.withPosition(10));
+    // match 0.02second updates
+    m_leftLeader.getMotorVoltage().setUpdateFrequency(50);
+    m_leftLeader.getVelocity().setUpdateFrequency(50);
+    //from aligned to opposed
+    m_leftFollower.setControl(new Follower(ShooterConstants.LEFT_LEADER_ID, MotorAlignmentValue.Opposed));
 
-
-
+    stop();
   }
 
+
+
   public void stop() {
-    drive.stopMotor();
+    //stop motor
+    m_leftLeader.setVoltage(0);
+    m_right.stopMotor();
   }
 
 
   
 
 
-  public void RotationAndPiviot(double RotationSpeed, double PiviotSpeed) {
-    // Trapezoid profile with max velocity 80 rps, max accel 160 rps/s
-    final TrapezoidProfile m_profile = new TrapezoidProfile(
-      new TrapezoidProfile.Constraints(80, 160)
-    );
-    // Final target of 200 rot, 0 rps
-    TrapezoidProfile.State m_goal = new TrapezoidProfile.State(PiviotSpeed, PiviotSpeed);
-    TrapezoidProfile.State m_goal = new TrapezoidProfile.State(PiviotSpeed, PiviotSpeed);
-    TrapezoidProfile.State m_setpoint = new TrapezoidProfile.State();
-
-    // create a position closed-loop request, voltage output, slot 0 configs
-    final PositionVoltage m_request = new PositionVoltage(0).withSlot(0);
-
-    // calculate the next profile setpoint
-    m_setpoint = m_profile.calculate(0.020, m_setpoint, m_goal);
-
-    // send the request to the device
-    m_request.Position = m_setpoint.position;
-    m_request.Velocity = m_setpoint.velocity;
-    if(RotationSpeed = 0)
-    m_talonFX.setControl(m_request);
-  }
-  public Command ShootingCommand(boolean button) {
-    if(button){
-      return run(
-        () -> RotationAndPiviot(ShooterConstants.RotationSpeed1, ShooterConstants.PiviotSpeed1),
-      );
-    }else{}
+  public void RotationAndPiviot(double RotationSpeed, double PiviotAngle) {
+    m_right.setControl(m_request.withPosition(PiviotAngle));
+    double output = bangBang.calculate(m_leftLeader.getVelocity().getValueAsDouble(), RotationSpeed);
+    m_leftLeader.setVoltage(output * ShooterConstants.FLYWHEEL_ON_VOLTS);
   }
 
-  public Command ShootingCommand2(boolean button) {
-    if(button){
-      return run(
-        () -> RotationAndPiviot(ShooterConstants.RotationSpeed2, ShooterConstants.PiviotSpeed2),
-      );
-    }else{}
+
+  public Command ShootingCommand(CANBus kCANBus) {
+    this.kCANBus = kCANBus;
+    return runEnd(
+        () -> RotationAndPiviot(
+            ShooterConstants.RotationSpeed1,
+            ShooterConstants.PiviotAngle1),
+        this::stop);
+  }
+
+  public Command ShootingCommand2(CANBus kCANBus) {
+    this.kCANBus = kCANBus;
+    return runEnd(
+        () -> RotationAndPiviot(
+            ShooterConstants.RotationSpeed2,
+            ShooterConstants.PiviotAngle2),
+        this::stop);
   }
   
 }
