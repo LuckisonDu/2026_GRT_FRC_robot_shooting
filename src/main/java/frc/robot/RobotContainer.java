@@ -15,16 +15,14 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    ShooterSubsystem.setDefaultCommand(
-        ShooterSubsystem.ShootingCommand(
-            () -> -driverController.getCircleButtonReleased(),
-          
-          
-          
-        ShooterSubsystem.ShootingCommand2(
-            () -> -driverController.getCrossButtonReleased(),
-          
-          );
+    driverController.circle().onTrue(
+        ShooterSubsystem.ShootingCommand());
+
+    driverController.cross().onTrue(
+        ShooterSubsystem.ShootingCommand2());
+
+    driverController.triangle().onTrue(
+        ShooterSubsystem.runOnce(ShooterSubsystem::stop));
   }
 
   public Command getAutonomousCommand() {

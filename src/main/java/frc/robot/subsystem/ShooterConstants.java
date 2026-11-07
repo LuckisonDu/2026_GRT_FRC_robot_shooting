@@ -1,32 +1,27 @@
-package frc.robot;
+package frc.robot.subsystem;
 
 public final class ShooterConstants {
   private ShooterConstants() {}
 
-  public static final class ShooterConstants {
-    public static final int LEFT_LEADER_ID = 3;
-    public static final int LEFT_FOLLOWER_ID = 10;    // real can id
-    public static final int RIGHT_ID = 11;
+  public static final int LEFT_LEADER_ID = 3;
+  public static final int LEFT_FOLLOWER_ID = 10;
+  public static final int RIGHT_ID = 11;
 
-    public static final int CURRENT_LIMIT_AMPS = 40;
-    public static final double MAX_OUTPUT = 0.5;
-    public static final double DEADBAND = 0.1;
-
-
-
-    
-    public static final double RotationSpeed1 = 0.5;
-    public static final double PiviotSpeed1 = 0.1;
-
-
-
-    public static final double RotationSpeed2 = 0.5;
-    public static final double PiviotSpeed2 = 0.1;
-  }
+  public static final int CANCODER_ID = -1;
+  public static final int CURRENT_LIMIT_AMPS = 40;
+  public static final double RotationSpeed1 = 100;
+  public static final double RotationSpeed2 = 200;
+  public static final double PiviotAngle1 = 60;
+  public static final double PiviotAngle2 = 90;
+  public static final double CANCODER_OFFSET = 0;
+  public static final double PIVOT_SENSOR_RATIO = 1;
+  public static final double FLYWHEEL_GEAR_RATIO = 1;
+  public static final double FLYWHEEL_ON_VOLTS = 2;
+  public static final double PIVOT_MAX_VOLTS = 3;
 
   public static final class PID {
     public static final double kP = 40;
-    public static final double kI = 0.5;
+    public static final double kI = 0;
     public static final double kD = 0.1;
   }
 

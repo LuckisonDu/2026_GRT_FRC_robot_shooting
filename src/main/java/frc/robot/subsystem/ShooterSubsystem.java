@@ -1,30 +1,35 @@
 package frc.robot.subsystem;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import com.ctre.phoenix6.CANBus;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+import edu.wpi.first.math.controller.BangBangController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystem.ShooterConstants.*;
-import java.util.function.DoubleSupplier;
+
 
 public class ShooterSubsystem extends SubsystemBase {
   // initialize devices on the rio can bus
   final CANBus kCANBus = CANBus.roboRIO();
   final TalonFX m_leftLeader = new TalonFX(ShooterConstants.LEFT_LEADER_ID, kCANBus);
-  final TalonFX m_right = new TalonFX(ShooterConstants.LEFT_ID, kCANBus);
   final TalonFX m_leftFollower = new TalonFX(ShooterConstants.LEFT_FOLLOWER_ID, kCANBus);
+  final TalonFX m_right = new TalonFX(ShooterConstants.RIGHT_ID, kCANBus);
+  final CANcoder m_cancoder = new CANcoder(ShooterConstants.CANCODER_ID, kCANBus);
+  final BangBangController bangBang = new BangBangController();
 
 
 
-  private final var configs = new TalonFXConfiguration();
-
-
-  private final DifferentialDrive drive = new DifferentialDrive(leftLeader::set, rightLeader::set);
 
 
 
